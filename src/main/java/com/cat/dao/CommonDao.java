@@ -19,9 +19,9 @@ public interface CommonDao<E, K extends Serializable> {
 
 	int deleteByIds(Collection<K> ks);
 
-	void deleteByEntity(E e);
+	int deleteByEntity(E e);
 
-	void deleteByEntities(Collection<E> es);
+	int deleteByEntities(Collection<E> es);
 
 	long deleteAll();
 
