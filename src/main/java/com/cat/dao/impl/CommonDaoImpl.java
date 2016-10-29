@@ -19,18 +19,15 @@ import java.util.Collection;
 import java.util.List;
 
 public class CommonDaoImpl<E, K extends Serializable> implements CommonDao<E, K> {
-//	@Resource
-//	@PersistenceUnit
-//	private EntityManagerFactory entityManagerFactory;
 
+	private static String id;
+	private final Class<E> clazz;
+	private final Class<E> key;
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	private final Class<E> clazz;
-	private final Class<E> key;
-	private static String id;
-
-	public CommonDaoImpl() {
+	@SuppressWarnings("unchecked")
+	protected CommonDaoImpl() {
 		Type type = this.getClass().getGenericSuperclass();
 		if (type != null && type instanceof ParameterizedType) {
 			ParameterizedType parameterizedType = (ParameterizedType) type;
@@ -49,21 +46,14 @@ public class CommonDaoImpl<E, K extends Serializable> implements CommonDao<E, K>
 
 	@PostConstruct
 	protected final void id() {
-//		Metamodel metamodel = entityManagerFactory.getMetamodel();
 		Metamodel metamodel = entityManager.getMetamodel();
 
 		EntityType<E> entityType = metamodel.entity(clazz);
 
-		Class<?> idType = entityType.getIdType().getJavaType();
-		if (idType != key) {
-			throw new RuntimeException("primary key type error in " + clazz.getSimpleName());
-		}
-		id = entityType.getId(key).getName();
+		assert entityType.getIdType().getJavaType() == key;
 
-//		System.out.println("init:" + clazz.getSimpleName() + ", primary key:" + id);
-		if (id == null || id.isEmpty()) {
-			throw new RuntimeException("can't find the key in " + clazz.getSimpleName());
-		}
+		id = entityType.getId(key).getName();
+		assert id != null && !id.isEmpty();
 	}
 
 	@Override
@@ -76,31 +66,10 @@ public class CommonDaoImpl<E, K extends Serializable> implements CommonDao<E, K>
 	public void saves(Collection<E> es) {
 		assert es != null && !es.isEmpty();
 		es.forEach(this::save);
-
-		/*EntityManager manager = manager();
-		if (es instanceof List) {
-			List<E> list = (List<E>) es;
-			for (int i = 0; i < es.size(); i++) {
-				E e = list.get(i);
-				manager.persist(e);
-				if ((i % 3) == 2) {
-					System.err.println("batch save.");
-					manager.flush();
-				}
-			}
-		}*/
 	}
 
 	@Override
 	public int deleteById(K k) {
-		/*E e = this.findById(k);
-		if (e == null) {
-			return 0;
-		}
-
-		manager().remove(e);
-		return 1;*/
-
 		assert k != null;
 		EntityManager manager = manager();
 
@@ -136,14 +105,9 @@ public class CommonDaoImpl<E, K extends Serializable> implements CommonDao<E, K>
 
 	@Override
 	public void deleteByEntity(E e) {
-		/*boolean contains = manager().contains(e);
-		if (contains) {
-			manager().remove(e);
-		} else {
-			manager().remove(manager().merge(e));
-		}*/
 		assert e != null;
 		EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
+		@SuppressWarnings("unchecked")
 		K id = (K) entityManagerFactory.getPersistenceUnitUtil().getIdentifier(e);
 		this.deleteById(id);
 	}
@@ -152,6 +116,14 @@ public class CommonDaoImpl<E, K extends Serializable> implements CommonDao<E, K>
 	public void deleteByEntities(Collection<E> es) {
 		assert es != null && !es.isEmpty();
 		es.forEach(this::deleteByEntity);
+	}
+
+	@Override
+	public long deleteAll() {
+		EntityManager session = manager();
+		CriteriaDelete<E> query = session.getCriteriaBuilder().createCriteriaDelete(clazz);
+		query.from(clazz);
+		return session.createQuery(query).executeUpdate();
 	}
 
 	@Override

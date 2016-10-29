@@ -163,4 +163,9 @@ public class UserDaoTest extends CommonDaoTest {
 		System.out.println(userDao.contains(user));
 		System.out.println(userDao.contains(user1));
 	}
+
+	@Test
+	public void deleteAll() throws Exception {
+		userDao.deleteAll();
+	}
 }

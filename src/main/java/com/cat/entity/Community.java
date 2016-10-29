@@ -6,16 +6,18 @@ import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
 @Accessors(chain = true)
 @Entity
-public class User {
+public class Community {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(length = 60, nullable = false)
 	private String name;
 
 	@Column(nullable = false, updatable = false)
@@ -23,4 +25,7 @@ public class User {
 
 	@Column(nullable = false)
 	private LocalDateTime updateTime = LocalDateTime.now();
+
+	@OneToMany(mappedBy = "community", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
+	private Set<Build> builds;
 }

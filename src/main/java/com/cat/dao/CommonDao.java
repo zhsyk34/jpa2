@@ -23,6 +23,8 @@ public interface CommonDao<E, K extends Serializable> {
 
 	void deleteByEntities(Collection<E> es);
 
+	long deleteAll();
+
 	void update(E e);
 
 	void merge(E e);

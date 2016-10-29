@@ -1,5 +1,6 @@
 package com.cat.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -11,11 +12,12 @@ import java.time.LocalDateTime;
 @Setter
 @Accessors(chain = true)
 @Entity
-public class User {
+public class Build {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(length = 60, nullable = false)
 	private String name;
 
 	@Column(nullable = false, updatable = false)
@@ -23,4 +25,9 @@ public class User {
 
 	@Column(nullable = false)
 	private LocalDateTime updateTime = LocalDateTime.now();
+
+	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+	@JoinColumn(name = "communityId", nullable = false, foreignKey = @ForeignKey(name = "community_build"))
+	@JsonIgnore
+	private Community community;
 }
