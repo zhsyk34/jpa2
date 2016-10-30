@@ -48,6 +48,13 @@
         <property name="jpaDialect" ref="jpaDialect"/>
         <!-- This makes /META-INF/persistence.xml is no longer necessary -->
         <property name="packagesToScan" value="com.cat.entity"/>
+        <!--<property name="mappingResources" value="classpath:mapper/*.xml"/>-->
+        <property name="mappingResources">
+            <list>
+                <!--<value>mapper/Role.xml</value>-->
+                <value>mapper/Role.xml</value>
+            </list>
+        </property>
         <property name="loadTimeWeaver">
             <bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver"/>
         </property>
@@ -68,13 +75,11 @@
         </property>
     </bean>
 
-    <!-- Register a PersistenceAnnotationBeanPostProcessor userd for @PersistenceContext -->
+    <!-- Register a PersistenceAnnotationBeanPostProcessor used for @PersistenceContext -->
     <!-- bean post-processor for JPA annotations -->
-    <!-- <context:annotation-config /> -->
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
     <!-- Exception translation bean post processor -->
     <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
 
     <context:component-scan base-package="com.cat.dao"/>
-
 </beans>

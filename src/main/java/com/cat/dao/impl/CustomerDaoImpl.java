@@ -5,5 +5,5 @@ import com.cat.entity.Customer;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class CustomerImplDao extends CommonDaoImpl<Customer, Long> implements CustomerDao {
+public class CustomerDaoImpl extends CommonDaoImpl<Customer, Long> implements CustomerDao {
 }

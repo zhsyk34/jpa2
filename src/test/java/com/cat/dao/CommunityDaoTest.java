@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Set;
 
 public class CommunityDaoTest extends CommonDaoTest {
-
     @Resource
     private CommunityDao communityDao;
 
@@ -58,8 +57,10 @@ public class CommunityDaoTest extends CommonDaoTest {
     @Test
     public void findList2() throws Exception {
         List<Community> list = communityDao.findList("t", LocalDate.of(2013, 12, 13), LocalDate.of(2015, 11, 12));
+        long count = communityDao.count("t", LocalDate.of(2013, 12, 13), LocalDate.of(2015, 11, 12));
         list.forEach(community -> {
             System.out.println(community.getId() + " " + community.getName() + " " + community.getCreateTime());
         });
+        System.out.println(count);
     }
 }

@@ -34,11 +34,11 @@ public class CommunityDaoImpl extends CommonDaoImpl<Community, Long> implements 
 
         Path<LocalDateTime> createTime = root.get("createTime");
         if (begin != null) {
-            Predicate predicate = builder.greaterThan(createTime, LocalDateTime.of(begin, LocalTime.NOON));
+            Predicate predicate = builder.greaterThanOrEqualTo(createTime, LocalDateTime.of(begin, LocalTime.MIN));
             predicates.add(predicate);
         }
         if (end != null) {
-            Predicate predicate = builder.lessThan(createTime, LocalDateTime.of(end, LocalTime.NOON));
+            Predicate predicate = builder.lessThanOrEqualTo(createTime, LocalDateTime.of(end, LocalTime.MIN));
             predicates.add(predicate);
         }
         query.where(predicates.toArray(new Predicate[predicates.size()]));
@@ -46,26 +46,34 @@ public class CommunityDaoImpl extends CommonDaoImpl<Community, Long> implements 
         return manager.createQuery(query).getResultList();
     }
 
-    /*public <SK> List<Build> findAllByAnyAttributes(AttributesHashMap<Build> attributes, SingularAttribute<Build, SK> order) {
+    @Override
+    public long count(String name, LocalDate begin, LocalDate end) {
+        EntityManager manager = super.manager();
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
 
-        final CriteriaBuilder builder = super.manager().getCriteriaBuilder();
+        Root<Community> root = query.from(Community.class);
+        query.select(builder.count(root));
 
-        final CriteriaQuery<Build> criteria = builder.createQuery(Build.class);
+        List<Predicate> predicates = new ArrayList<>();
 
-        final Root<Build> root = criteria.from(Build.class);
-        criteria.select(root);
-
-        Predicate where = builder.conjunction();
-        for (Entry<SingularAttribute<Build, Object>, Object> attr : attributes.entrySet()) {
-            where = builder.or(where, builder.equal(root.get(attr.getKey()), attr.getValue()));
+        if (name != null && !name.isEmpty()) {
+            Predicate predicate = builder.like(root.get("name"), "%" + name + "%");
+            predicates.add(predicate);
         }
-        criteria.where(where);
 
-        if (order != null) {
-            criteria.orderBy(builder.asc(root.get(order)));
+        Path<LocalDateTime> createTime = root.get("createTime");
+        if (begin != null) {
+            Predicate predicate = builder.greaterThanOrEqualTo(createTime, LocalDateTime.of(begin, LocalTime.MIN));
+            predicates.add(predicate);
         }
-        List<E> results = getEntityManager().createQuery(criteria).getResultList();
+        if (end != null) {
+            Predicate predicate = builder.lessThanOrEqualTo(createTime, LocalDateTime.of(end, LocalTime.MIN));
+            predicates.add(predicate);
+        }
+        query.where(predicates.toArray(new Predicate[predicates.size()]));
 
-        return results;
-    }*/
+        return manager.createQuery(query).getSingleResult();
+    }
+
 }

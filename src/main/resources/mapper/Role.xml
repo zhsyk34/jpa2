@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+                 version="2.0">
+    <description>study first</description>
+    <package>com.cat.entity</package>
+    <entity class="Role">
+        <table name="role"/>
+        <attributes>
+            <id name="id">
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <basic name="name">
+                <column name="name" length="100" nullable="true"/>
+            </basic>
+        </attributes>
+    </entity>
+</entity-mappings>
+
+        <!--<hibernate-mapping package="com.cat.entity">
+            <class name="Role">
+                <id name="id">
+                    <generator class="native"/>
+                </id>
+
+                <property name="name" type="string" length="60" not-null="true" unique-key="role_name"/>
+            </class>
+        </hibernate-mapping>-->

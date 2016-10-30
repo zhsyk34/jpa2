@@ -21,9 +21,9 @@ import java.util.List;
 
 public class CommonDaoImpl<E, K extends Serializable> implements CommonDao<E, K> {
 
-    private static String id;
-    private final Class<E> clazz;
-    private final Class<E> key;
+    protected static String id;
+    protected final Class<E> clazz;
+    protected final Class<E> key;
     @PersistenceContext
 //    @PersistenceContext(type = PersistenceContextType.EXTENDED)
     private EntityManager entityManager;
